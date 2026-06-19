@@ -7,7 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "pokemon_captura", schema = "pokemon")
+@Table(name = "pokemon_captura", schema = "pokemon", indexes = {
+    @Index(name = "idx_captura_pokemon", columnList = "pokemon_id"),
+    @Index(name = "idx_captura_entrenador", columnList = "entrenador_id")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

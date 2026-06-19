@@ -1,6 +1,8 @@
 -- Esquema de base de datos Pokemon
 -- Para parcial
 
+CREATE SCHEMA IF NOT EXISTS pokemon;
+
 -- Tabla: pueblo
 CREATE TABLE pokemon.pueblo (
     id SERIAL PRIMARY KEY,

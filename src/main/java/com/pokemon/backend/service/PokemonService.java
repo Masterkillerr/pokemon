@@ -14,6 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio para la gestion de Pokemon.
+ * Proporciona operaciones de consulta y creacion de pokemons.
+ */
 @Service
 @RequiredArgsConstructor
 public class PokemonService {
@@ -21,6 +25,14 @@ public class PokemonService {
     private final PokemonRepository pokemonRepository;
     private final TipoPokemonRepository tipoPokemonRepository;
 
+    /**
+     * Obtiene una lista de pokemons filtrados por su tipo (descripcion).
+     * La busqueda no distingue entre mayusculas y minusculas.
+     *
+     * @param tipo Descripcion del tipo de pokemon (ej: "agua", "fuego")
+     * @return Lista de PokemonResponse con los pokemons del tipo especificado
+     * @throws ResourceNotFoundException si no existe el tipo de pokemon
+     */
     @Transactional(readOnly = true)
     public List<PokemonResponse> getPokemonsByTipo(String tipo) {
         TipoPokemon tipoPokemon = tipoPokemonRepository.findByDescripcionIgnoreCase(tipo)
@@ -32,6 +44,14 @@ public class PokemonService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Crea un nuevo pokemon en el sistema.
+     * Valida que el tipo de pokemon exista antes de crearlo.
+     *
+     * @param request Datos del pokemon a crear (nombre, descripcion, tipo, generacion, etc.)
+     * @return PokemonResponse con los datos del pokemon creado
+     * @throws ResourceNotFoundException si el tipo de pokemon especificado no existe
+     */
     @Transactional
     public PokemonResponse createPokemon(PokemonRequest request) {
         TipoPokemon tipoPokemon = tipoPokemonRepository.findById(request.getTipoPokemonId())
@@ -49,6 +69,12 @@ public class PokemonService {
         return mapToPokemonResponse(pokemon);
     }
 
+    /**
+     * Convierte una entidad Pokemon a un DTO PokemonResponse.
+     *
+     * @param pokemon Entidad Pokemon a mapear
+     * @return PokemonResponse con los datos formateados para la API
+     */
     private PokemonResponse mapToPokemonResponse(Pokemon pokemon) {
         return PokemonResponse.builder()
                 .id(pokemon.getId())

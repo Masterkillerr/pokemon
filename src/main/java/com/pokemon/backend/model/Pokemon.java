@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "pokemon", schema = "pokemon")
+@Table(name = "pokemon", schema = "pokemon", indexes = {
+    @Index(name = "idx_pokemon_tipo", columnList = "tipo_pokemon"),
+    @Index(name = "idx_pokemon_uuid", columnList = "uuid")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
