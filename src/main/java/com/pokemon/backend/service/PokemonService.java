@@ -1,5 +1,6 @@
 package com.pokemon.backend.service;
 
+import com.pokemon.backend.dto.PokemonRequest;
 import com.pokemon.backend.dto.PokemonResponse;
 import com.pokemon.backend.exception.ResourceNotFoundException;
 import com.pokemon.backend.model.Pokemon;
@@ -29,6 +30,23 @@ public class PokemonService {
         return pokemonRepository.findByTipoPokemon(tipoPokemon).stream()
                 .map(this::mapToPokemonResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PokemonResponse createPokemon(PokemonRequest request) {
+        TipoPokemon tipoPokemon = tipoPokemonRepository.findById(request.getTipoPokemonId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tipo de pokemon no encontrado con id: " + request.getTipoPokemonId()));
+
+        Pokemon pokemon = new Pokemon();
+        pokemon.setNombre(request.getNombre());
+        pokemon.setDescripcion(request.getDescripcion());
+        pokemon.setFechaDescubrimiento(request.getFechaDescubrimiento());
+        pokemon.setTipoPokemon(tipoPokemon);
+        pokemon.setGeneracion(request.getGeneracion());
+
+        pokemon = pokemonRepository.save(pokemon);
+        return mapToPokemonResponse(pokemon);
     }
 
     private PokemonResponse mapToPokemonResponse(Pokemon pokemon) {
