@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +53,24 @@ public class EntrenadorController {
             @PathVariable String uuid) {
         List<PokemonResponse> pokemons = entrenadorService.getPokemonsByEntrenadorUuid(uuid);
         return ResponseEntity.ok(pokemons);
+    }
+
+    @PostMapping("/{uuid}/pokemons/{pokemonUuid}")
+    @Operation(summary = "Agregar un pokemon al listado de pokemons de un entrenador")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Pokemon agregado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Entrenador o pokemon no encontrado"),
+            @ApiResponse(responseCode = "409", description = "Pokemon ya registrado al entrenador"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<List<PokemonResponse>> addPokemonToEntrenador(
+            @Parameter(description = "UUID del entrenador", example = "a1b2c3d4-e5f6-7890-abcd-ef1234567890")
+            @Pattern(regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", message = "Formato de UUID invalido")
+            @PathVariable String uuid,
+            @Parameter(description = "UUID del pokemon", example = "a1b2c3d4-e5f6-7890-abcd-ef1234567890")
+            @Pattern(regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", message = "Formato de UUID invalido")
+            @PathVariable String pokemonUuid) {
+        List<PokemonResponse> pokemons = entrenadorService.addPokemonToEntrenador(uuid, pokemonUuid);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pokemons);
     }
 }
